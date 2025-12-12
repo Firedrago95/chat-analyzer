@@ -15,7 +15,6 @@ public class ChzzkWebsocketClient extends WebSocketClient {
 
     private final String chatChannelId;
     private final String accessToken;
-
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     private ScheduledExecutorService pingScheduler;
@@ -30,11 +29,13 @@ public class ChzzkWebsocketClient extends WebSocketClient {
     public void onOpen(ServerHandshake handshakeData) {
         System.out.println(">>> Websocket 연결 성공! 인증 패킷 전송 시작...");
 
+        // 1. 인증 패킷 전송
         String authPacket = createAuthPacket(chatChannelId, accessToken);
         if (authPacket != null) {
             this.send(authPacket);
         }
 
+        // 2. 스케줄러 시작 (20초마다 능동적으로 생존 신고)
         pingScheduler = Executors.newSingleThreadScheduledExecutor();
         pingScheduler.scheduleAtFixedRate(this::sendActivePing, 20, 20, TimeUnit.SECONDS);
     }
@@ -48,21 +49,23 @@ public class ChzzkWebsocketClient extends WebSocketClient {
             switch (cmd) {
                 case 0:
                     System.out.println("<<< 서버 Ping 수신 (cmd: 0)");
-                    sendPong();
+                    sendPong(); // "응 살아있어" (Pong) 대답
                     break;
 
-                case 10000:
+                case 10000: // [서버 -> 나] ㅇㅇ 너 살아있네 (내 핑에 대한 대답)
                     System.out.println("<<< [수신] 서버 Pong(cmd: 10000) - 내 핑에 대답함");
                     break;
 
-                case 93101:
+                case 93101: // 채팅 메시지
                     JsonNode bdy = node.get("bdy");
 
                     if (bdy != null && bdy.isArray()) {
                         for (JsonNode chatItem : bdy) {
+                            // 1. 채팅 내용 추출
                             String messageType = chatItem.path("msgTypeCode").asText();
                             String content = chatItem.path("msg").asText();
 
+                            // 3. 콘솔 출력 (형식: [***] 내용)
                             System.out.println("[****] " + content);
                         }
                     }
@@ -79,6 +82,7 @@ public class ChzzkWebsocketClient extends WebSocketClient {
     @Override
     public void onClose(int code, String reason, boolean remote) {
         System.out.println(">>> 연결 끊김: " + reason);
+        // 스케줄러 종료 (자원 정리)
         if (pingScheduler != null && !pingScheduler.isShutdown()) {
             pingScheduler.shutdown();
         }
@@ -89,15 +93,23 @@ public class ChzzkWebsocketClient extends WebSocketClient {
         ex.printStackTrace();
     }
 
-    // ---------------- Helper Methods ----------------
-
+    // 서버가 물어봤을 때 대답하는 용도 (Reactive)
     private void sendPong() {
-        String pongPacket = "{\"cmd\": 10000, \"ver\": 2, \"svcid\": \"game\", \"bdy\": {}}";
+        String pongPacket = "{"
+                + "\"cmd\": 10000, "
+                + "\"ver\": 2, "
+                + "\"svcid\": \"game\", "
+                + "\"bdy\": {}"
+                + "}";
         this.send(pongPacket);
     }
 
+    // 내가 먼저 찌르는 용도 (Proactive)
     private void sendActivePing() {
-        String pingPacket = "{\"cmd\": 0, \"ver\": 2}";
+        String pingPacket = "{"
+                + "\"cmd\": 0, "
+                + "\"ver\": 2"
+                + "}";
         try {
             this.send(pingPacket);
         } catch (Exception e) {

@@ -51,7 +51,6 @@ public class ChzzkApiClient {
         }
 
         String accessToken = chatAccessResponse.content().accessToken();
-        System.out.println("accessToken = " + accessToken);
         return accessToken;
     }
 }
