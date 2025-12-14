@@ -7,13 +7,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import lombok.extern.slf4j.Slf4j;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 @Slf4j
-@Component
-@Scope("prototype")
 public class ChzzkWebsocketClient extends WebSocketClient {
 
     private final String chatChannelId;
@@ -24,10 +19,10 @@ public class ChzzkWebsocketClient extends WebSocketClient {
 
     public ChzzkWebsocketClient(
         ChzzkMessageHandler messageHandler,
-        @Value("${chzzk.websocket.url}") String websocketUrl,
         String chatChannelId,
-        String accessToken) throws URISyntaxException {
-        super(new URI(websocketUrl));
+        String accessToken
+    ) throws URISyntaxException {
+        super(new URI("wss://kr-ss1.chat.naver.com/chat"));
         this.messageHandler = messageHandler;
         this.chatChannelId = chatChannelId;
         this.accessToken = accessToken;
