@@ -1,4 +1,4 @@
-package io.github.hypecycle.chzzk.connector;
+package io.github.hypecycle.chzzk.connector.chzzk;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

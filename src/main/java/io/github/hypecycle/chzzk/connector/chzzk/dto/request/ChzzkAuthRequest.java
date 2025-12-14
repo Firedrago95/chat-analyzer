@@ -1,4 +1,4 @@
-package io.github.hypecycle.chzzk.connector.dto.request;
+package io.github.hypecycle.chzzk.connector.chzzk.dto.request;
 
 public record ChzzkAuthRequest(
         String ver,

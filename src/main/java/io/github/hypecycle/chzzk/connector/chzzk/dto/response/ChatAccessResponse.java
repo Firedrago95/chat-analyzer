@@ -1,4 +1,4 @@
-package io.github.hypecycle.chzzk.connector.dto.response;
+package io.github.hypecycle.chzzk.connector.chzzk.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

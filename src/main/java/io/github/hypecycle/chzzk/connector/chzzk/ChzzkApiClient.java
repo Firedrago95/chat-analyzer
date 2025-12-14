@@ -1,7 +1,7 @@
-package io.github.hypecycle.chzzk.connector;
+package io.github.hypecycle.chzzk.connector.chzzk;
 
-import io.github.hypecycle.chzzk.connector.dto.response.ChannelInfoResponse;
-import io.github.hypecycle.chzzk.connector.dto.response.ChatAccessResponse;
+import io.github.hypecycle.chzzk.connector.chzzk.dto.response.ChannelInfoResponse;
+import io.github.hypecycle.chzzk.connector.chzzk.dto.response.ChatAccessResponse;
 import io.github.hypecycle.chzzk.global.ChzzkPipelineException;
 import io.github.hypecycle.chzzk.global.ErrorCode;
 import org.springframework.http.MediaType;
