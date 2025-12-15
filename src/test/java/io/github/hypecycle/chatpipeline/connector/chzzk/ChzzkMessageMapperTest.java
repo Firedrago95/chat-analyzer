@@ -51,7 +51,6 @@ class ChzzkMessageMapperTest {
         assertThat(result.author().nickname()).isEqualTo("테스터");
         assertThat(result.message()).isEqualTo("안녕하세요");
         assertThat(result.time().getYear()).isEqualTo(2023);
-        assertThat(result.headers()).containsEntry("osType", "WINDOWS");
     }
 
     @Test

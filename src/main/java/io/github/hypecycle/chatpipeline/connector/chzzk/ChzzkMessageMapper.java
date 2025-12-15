@@ -43,6 +43,9 @@ public class ChzzkMessageMapper {
     }
 
     private Author toAuthor(String profileJson) throws JsonProcessingException {
+        if (profileJson == null) {
+            return new Author("anonymous", "익명");
+        }
         JsonNode profile = objectMapper.readTree(profileJson);
         return new Author(
             profile.get("userIdHash").asText(),
@@ -63,13 +66,6 @@ public class ChzzkMessageMapper {
         throws JsonProcessingException {
         Map<String, Object> headers = new HashMap<>();
         JsonNode extras = objectMapper.readTree(extrasJson);
-
-        if (extras.has("osType")) {
-            headers.put("osType", extras.get("osType").asText());
-        }
-        if (extras.has("chatType")) {
-            headers.put("chatType", extras.get("chatType").asText());
-        }
 
         if (messageType == MessageType.DONATION) {
             extractDonationHeaders(extras, headers);

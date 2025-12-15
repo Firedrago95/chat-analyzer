@@ -1,9 +1,12 @@
 package io.github.hypecycle.chatpipeline.connector.chzzk;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.github.hypecycle.chatpipeline.buffer.ChatBuffer;
 import io.github.hypecycle.chatpipeline.connector.chzzk.dto.request.ChzzkAuthRequest;
 import io.github.hypecycle.chatpipeline.connector.chzzk.dto.response.ChzzkResponseMessage;
+import io.github.hypecycle.chatpipeline.connector.chzzk.dto.response.ChzzkResponseMessage.Body;
 import io.github.hypecycle.chatpipeline.domain.ChatMessage;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;
@@ -20,6 +23,7 @@ public class ChzzkMessageHandler {
 
     private final ChzzkMessageMapper chzzkMessageMapper;
     private final ObjectMapper objectMapper;
+    private final ChatBuffer chatBuffer;
 
     public void handleOpen(WebSocketClient client, String chatChannelId, String accessToken,
         ScheduledExecutorService pingScheduler) {
@@ -33,10 +37,13 @@ public class ChzzkMessageHandler {
 
     public Optional<String> handleMessage(String message) {
         try {
-            ChzzkResponseMessage response = objectMapper.readValue(message,
-                ChzzkResponseMessage.class);
+            ChzzkResponseMessage response = objectMapper.readValue(message, ChzzkResponseMessage.class);
 
             return switch (response.cmd()) {
+                case CONNECT_ACK -> {
+                    log.info(">>> 치지직 웹소켓 서버 접속 승인 완료");
+                    yield Optional.empty();
+                }
                 case PING -> {
                     log.info("<<< 서버 Ping 수신 (cmd: 0)");
                     yield Optional.of(createPongPacket());
@@ -45,14 +52,17 @@ public class ChzzkMessageHandler {
                     log.info("<<< [수신] 서버 Pong(cmd: 10000) - 내 핑에 대답함");
                     yield Optional.empty();
                 }
-                case CHAT -> {
-                    for (ChzzkResponseMessage.Body chatItem : response.bdy()) {
-                        ChatMessage chatMessage = chzzkMessageMapper.parse(chatItem);
-                        log.info(chatMessage.toString());
+                case CHAT, DONATION -> {
+                    if (response.bdy().isArray()) {
+                        for (JsonNode node : response.bdy()) {
+                            Body bodyDto = objectMapper.treeToValue(node, Body.class);
+                            ChatMessage chatMessage = chzzkMessageMapper.parse(bodyDto);
+                            chatBuffer.produce(chatMessage);
+                            log.info(">>> {}", chatMessage);
+                        }
                     }
                     yield Optional.empty();
                 }
-                default -> Optional.empty();
             };
         } catch (Exception e) {
             log.error("메시지 파싱 실패: {}", message, e);
