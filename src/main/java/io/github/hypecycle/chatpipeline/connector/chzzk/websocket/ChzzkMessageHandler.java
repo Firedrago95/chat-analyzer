@@ -1,4 +1,4 @@
-package io.github.hypecycle.chatpipeline.connector.chzzk;
+package io.github.hypecycle.chatpipeline.connector.chzzk.websocket;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -7,6 +7,7 @@ import io.github.hypecycle.chatpipeline.buffer.ChatBuffer;
 import io.github.hypecycle.chatpipeline.connector.chzzk.dto.request.ChzzkAuthRequest;
 import io.github.hypecycle.chatpipeline.connector.chzzk.dto.response.ChzzkResponseMessage;
 import io.github.hypecycle.chatpipeline.connector.chzzk.dto.response.ChzzkResponseMessage.Body;
+import io.github.hypecycle.chatpipeline.connector.chzzk.mapper.ChzzkMessageMapper;
 import io.github.hypecycle.chatpipeline.domain.ChatMessage;
 import java.util.Optional;
 import java.util.concurrent.ScheduledExecutorService;

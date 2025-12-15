@@ -1,7 +1,7 @@
 package io.github.hypecycle.chatpipeline.global.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.hypecycle.chatpipeline.connector.chzzk.ChannelIdReader;
+import io.github.hypecycle.chatpipeline.connector.chzzk.api.ChannelIdReader;
 import java.util.Scanner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

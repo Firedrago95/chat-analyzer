@@ -6,6 +6,10 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import io.github.hypecycle.chatpipeline.connector.chzzk.api.ChannelIdReader;
+import io.github.hypecycle.chatpipeline.connector.chzzk.api.ChzzkApiClient;
+import io.github.hypecycle.chatpipeline.connector.chzzk.websocket.ChzzkWebsocketClient;
+import io.github.hypecycle.chatpipeline.connector.chzzk.websocket.ChzzkWebsocketClientFactory;
 import io.github.hypecycle.chatpipeline.global.ChzzkPipelineException;
 import io.github.hypecycle.chatpipeline.global.ErrorCode;
 import org.junit.jupiter.api.Test;

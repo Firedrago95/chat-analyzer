@@ -1,4 +1,4 @@
-package io.github.hypecycle.chatpipeline.connector.chzzk;
+package io.github.hypecycle.chatpipeline.connector.chzzk.api;
 
 import io.github.hypecycle.chatpipeline.connector.chzzk.dto.response.ChannelInfoResponse;
 import io.github.hypecycle.chatpipeline.connector.chzzk.dto.response.ChatAccessResponse;

@@ -1,4 +1,4 @@
-package io.github.hypecycle.chatpipeline.connector.chzzk;
+package io.github.hypecycle.chatpipeline.connector.chzzk.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

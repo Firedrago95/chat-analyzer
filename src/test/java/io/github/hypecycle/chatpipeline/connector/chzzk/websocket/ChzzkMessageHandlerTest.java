@@ -1,4 +1,4 @@
-package io.github.hypecycle.chatpipeline.connector.chzzk;
+package io.github.hypecycle.chatpipeline.connector.chzzk.websocket;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.hypecycle.chatpipeline.buffer.ChatBuffer;
 import io.github.hypecycle.chatpipeline.connector.chzzk.dto.response.ChzzkCommand;
 import io.github.hypecycle.chatpipeline.connector.chzzk.dto.response.ChzzkResponseMessage;
+import io.github.hypecycle.chatpipeline.connector.chzzk.mapper.ChzzkMessageMapper;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

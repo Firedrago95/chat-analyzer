@@ -1,4 +1,4 @@
-package io.github.hypecycle.chatpipeline.connector.chzzk;
+package io.github.hypecycle.chatpipeline.connector.chzzk.websocket;
 
 import java.net.URISyntaxException;
 import lombok.RequiredArgsConstructor;
