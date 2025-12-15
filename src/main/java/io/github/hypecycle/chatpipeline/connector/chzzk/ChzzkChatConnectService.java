@@ -4,7 +4,6 @@ import io.github.hypecycle.chatpipeline.global.ChzzkPipelineException;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +14,7 @@ public class ChzzkChatConnectService implements CommandLineRunner {
 
     private final ChannelIdReader channelIdReader;
     private final ChzzkApiClient chzzkApiClient;
-    private final ObjectProvider<ChzzkWebsocketClient> websocketClientProvider;
+    private final ChzzkWebsocketClientFactory chzzkWebsocketClientFactory;
 
     @Override
     public void run(String... args) throws Exception {
@@ -25,14 +24,13 @@ public class ChzzkChatConnectService implements CommandLineRunner {
                 String chatChannelId = chzzkApiClient.getChatChannelId(channelId);
                 String accessToken = chzzkApiClient.getAccessToken(chatChannelId);
 
-                ChzzkWebsocketClient socketClient = websocketClientProvider.getObject(chatChannelId,
-                    accessToken);
+                ChzzkWebsocketClient socketClient = chzzkWebsocketClientFactory.create(chatChannelId, accessToken);
                 socketClient.connectBlocking();
                 break;
 
             } catch (ChzzkPipelineException e) {
                 log.error(e.getMessage());
-                TimeUnit.SECONDS.sleep(3);
+                TimeUnit.SECONDS.sleep(2);
             }
         }
     }
