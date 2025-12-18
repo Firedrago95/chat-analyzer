@@ -14,7 +14,7 @@ public class ChatBuffer {
         queue.offer(chatMessage);
     }
 
-    public ChatMessage poll() {
-        return queue.poll();
+    public ChatMessage take() throws InterruptedException {
+        return queue.take();
     }
 }
