@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.TimeUnit;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -25,7 +26,7 @@ public class ChatBuffer {
             long remaining = deadLine - System.currentTimeMillis();
             if (remaining < 0) break;
 
-            ChatMessage next = queue.poll();
+            ChatMessage next = queue.poll(500, TimeUnit.MILLISECONDS);
             if (next == null) break;
             tempBatch.add(next);
             if (!queue.isEmpty()) {
