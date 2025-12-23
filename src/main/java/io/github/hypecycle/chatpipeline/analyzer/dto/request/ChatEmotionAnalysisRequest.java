@@ -5,11 +5,12 @@ import java.util.Map;
 public record ChatEmotionAnalysisRequest(
     String model,
     String prompt,
+    String format,
     boolean stream,
     Map<String, Object> options
 ) {
     public static ChatEmotionAnalysisRequest from(String model, String prompt) {
         Map<String, Object> temperature = Map.of("temperature", 0.1);
-        return new ChatEmotionAnalysisRequest(model, prompt, false, temperature);
+        return new ChatEmotionAnalysisRequest(model, prompt, "json",false, temperature);
     }
 }

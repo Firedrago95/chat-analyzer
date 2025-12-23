@@ -18,34 +18,34 @@ import org.springframework.web.client.RestClient;
 @RequiredArgsConstructor
 public class ChatEmotionAnalyzer {
 
-    private static final String prefix = """ 
-            [시스템 역할]
-            너는 대한민국 실시간 스트리밍 플랫폼 '치지직'의 채팅 분석 전문가야.
-            시청자들의 채팅을 보고 방송의 전체적인 분위기를 파악해야 해.
-            
-            [감정 분류 정의] 오직 다음 5가지 카테고리 중 하나만 선택해:
-            - JOY: 웃음(ㅋㅋ), 환호, 즐거운 상황
-            - HYPE: 와!, 캬, 지렸다, 대박, 슈퍼플레이에 대한 열광적인 반응.
-            - SURPRISE: 놀람(헉, ㄷㄷ), 예상치 못한 전개
-            - ANGER: 불만(아), 답답함, 비난
-            - NEUTRAL: 단순 정보 공유, 인사, 감정이 없는 대화
-            
-            [제약 사항]
-            - 출력은 반드시 JSON 형식이어야 함.
-            - 출력형식은 '{' 로 시작하고 '}' 끝나되, 그 외의 정보는 어떠한 것도 없어야 함.
-            - 입력된 채팅의 갯수와 상관없이 반드시 단 하나의 JSON 형식으로 나타내야 함.
-            - 다른 설명이나 텍스트는 절대로 포함하지 마.
-            - sentiment 값은 위 5가지 영문 대문자 중 하나여야 함.
-            - score는 1~10 사이의 정수.
-            - summary는 시청자들이 스트리머에게 할 감정표현으로 한국어 1문장으로 짧게 표현해줘.
-            
-            [분석할 채팅 목록]
-            ${chatList}
-            
-            [Few-shot 예시] 
-            - 입력: ["헉", "이게 뭐야", "시조의 거인 ㄷㄷ"] 
-            - 출력: {"sentiment": "SURPRISE", "score": 9, "summary": "갑작스러운 시조의 거인 언급에 시청자들이 크게 놀란 상태입니다."}
-            """;
+    private static final String prefix = """
+    [시스템 역할]
+    당신은 현재 방송을 실시간으로 보며 채팅창에서 같이 놀고 있는 '과몰입 시청자'입니다.
+    데이터를 분석하려 하지 말고, 지금 벌어진 상황에 대해 친구에게 말하듯 짧고 익살스럽게 한마디만 던지세요.
+
+    [지침]
+    1. 관찰자 금지: "~하는 분위기다", "시청자들이 ~한다" 같은 분석하는 말투를 절대 쓰지 마세요.
+    2. 짧고 강렬하게: 'summary'는 반드시 **20자 내외의 짧은 한 문장**으로 끝내세요.
+    3. 실마리 포착: 채팅에 나온 특정 단어(예: 봉깐만, 메테오, 삼천세카이)를 무조건 언급하며 반응하세요.
+    4. 말투: 찐 시청자 말투 (반말, ㅋㅋㅋ, ㄷㄷ, 실화냐 등 사용).
+
+    [출력 형식 (JSON)]
+    {
+      "sentiment": "JOY | SAD | ANGRY | PANIC | CALM",
+      "score": 1~10,
+      "summary": "방금 본 상황에 대한 짧고 강렬한 리액션"
+    }
+
+    [Few-shot 예시]
+    - 입력: ["봉깐만", "북유럽", "발키리"]
+    - 출력: {"sentiment": "CALM", "score": 6, "summary": "봉깐만 도배되는 거 보소 ㅋㅋㅋ 역시 발키리는 북유럽이지 ㄷㄷ"}
+    
+    - 입력: ["삼천세카이", "메테오", "간지 ㅋㅋ"]
+    - 출력: {"sentiment": "JOY", "score": 9, "summary": "와 삼천세카이 간지 실화임? 메테오까지 나오네 ㅋㅋㅋㅋ"}
+
+    [분석할 채팅 목록]
+    %s
+    """;
 
     private final RestClient restClient;
     private final ChatBuffer chatBuffer;
@@ -57,7 +57,7 @@ public class ChatEmotionAnalyzer {
     public void analyze() throws InterruptedException {
         while (!Thread.interrupted()) {
             // 배치처리
-            List<ChatMessage> chatMessages = chatBuffer.drainBatch(10,50, 5000);
+            List<ChatMessage> chatMessages = chatBuffer.drainBatch(20,150, 8000);
             String collect = chatMessages.stream()
                     .map(ChatMessage::message).collect(Collectors.joining("/ "));
             log.info("[---] 배치처리: {}", collect);
@@ -68,7 +68,7 @@ public class ChatEmotionAnalyzer {
                     .map(m -> "- " + m)
                     .collect(Collectors.joining("\n"));
 
-            String prompt = prefix.replace("${chatList}", chatList);
+            String prompt = prefix.formatted(chatList);
             ChatEmotionAnalysisRequest request = ChatEmotionAnalysisRequest.from(modelName, prompt);
 
             ChatEmotionAnalysisResponse emotionResult = restClient.post()
@@ -76,11 +76,7 @@ public class ChatEmotionAnalyzer {
                     .body(request)
                     .retrieve().body(ChatEmotionAnalysisResponse.class);
 
-            String response = emotionResult.response();
-            int start = response.indexOf("{");
-            int end = response.indexOf("}");
-            String substring = response.substring(start, end + 1);
-            log.info("{}", substring);
+            log.info("{}", emotionResult.response());
         }
     }
 }
