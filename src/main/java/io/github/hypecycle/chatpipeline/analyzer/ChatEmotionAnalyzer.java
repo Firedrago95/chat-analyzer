@@ -57,7 +57,7 @@ public class ChatEmotionAnalyzer {
     public void analyze() throws InterruptedException {
         while (!Thread.interrupted()) {
             // 배치처리
-            List<ChatMessage> chatMessages = chatBuffer.drainBatch(50, 10000);
+            List<ChatMessage> chatMessages = chatBuffer.drainBatch(10,50, 5000);
             String collect = chatMessages.stream()
                     .map(ChatMessage::message).collect(Collectors.joining("/ "));
             log.info("[---] 배치처리: {}", collect);

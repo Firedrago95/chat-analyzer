@@ -17,7 +17,6 @@ public class ChatBuffer {
 
     public void produce(ChatMessage chatMessage) {
         queue.offer(chatMessage);
-        log.info("[----] 현재 버퍼 대기 : {}", queue.size());
     }
 
     public List<ChatMessage> drainBatch(int minSize, int maxSize, long timeoutMs) throws InterruptedException {
@@ -37,6 +36,8 @@ public class ChatBuffer {
         if (tempBatch.size() < maxSize && !queue.isEmpty()) {
             queue.drainTo(tempBatch, maxSize - tempBatch.size());
         }
+
+        log.info("[----] 버퍼처리 개수: {},  현재 버퍼 대기 : {}", tempBatch.size(),queue.size());
 
         return List.copyOf(tempBatch);
     }
