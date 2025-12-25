@@ -10,4 +10,4 @@
 - CHZZK 플랫폼 WebSocket 연결
 - 실시간 채팅 메시지 수집 및 버퍼링
 - 비동기 배치 처리
-- Ollama LLM(exaone 3.5 7b)을 이용한 감정 분석
+- Ollama LLM(gemma3 12b)을 이용한 감정 분석
