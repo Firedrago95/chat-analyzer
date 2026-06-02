@@ -45,6 +45,10 @@ public class ChzzkMessageHandler {
                     if (response.bdy().isArray()) {
                         for (JsonNode node : response.bdy()) {
                             Body bodyDto = objectMapper.treeToValue(node, Body.class);
+                            
+                            log.info("채팅 원본 JSON: {}", node.toString());
+                            log.info("유저 프로필 상세: {}", bodyDto.profile());
+
                             ChatMessage chatMessage = chzzkMessageMapper.parse(bodyDto);
                             chatBuffer.produce(chatMessage);
 //                            log.info("[ >> ] 수집: {}", chatMessage.message());
